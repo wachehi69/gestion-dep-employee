@@ -58,4 +58,10 @@ public class EmployeeRestController {
 		return employeeService.updateEmployee(e, id);
 	}
 
+	@GetMapping("employees/pageable")
+	public ResponseEntity<Map<String, Object>> findAllEmployees(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size) {
+		return new ResponseEntity<>(employeeService.findAllEmployees(page, size), HttpStatus.OK);
+	}
+
 }

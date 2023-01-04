@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import net.javaguides.springboot.entities.Department;
@@ -84,6 +85,48 @@ public class EmployeeServiceImpl implements EmployeeService {
 		emp.setDepartment(dep);
 
 		return employeeRepository.saveAndFlush(emp);
+	}
+
+	@Override
+	public Map<String, Object> findEmployees(String employeeLastName, int page, int size) {
+
+		List<Employee> employeeList = new ArrayList<>();
+		Map<String, Object> employee = new HashMap<>();
+
+		Pageable paging = PageRequest.of(page, size, Sort.by("employeeFirstName"));
+		Page<Employee> pageEmploye = employeeRepository.findAllByEmployeeLastName(employeeLastName, paging);
+
+		if (pageEmploye == null || pageEmploye.isEmpty()) {
+			throw new RuntimeException("le nom est inexistant");
+
+		} else {
+			employeeList = pageEmploye.getContent();
+			employee.put("employee", employeeList);
+			employee.put("pageCurrent", pageEmploye.getNumber()); // page courante
+			employee.put("totalItems", pageEmploye.getTotalElements()); // nbre d'elments
+			employee.put("totalPage", pageEmploye.getTotalPages()); // nbre de pages
+		}
+
+		return employee;
+
+	}
+
+	@Override
+	public Map<String, Object> findEmployeesByMotCle(String employeeLastName, int page, int size) {
+
+		List<Employee> employeeList = new ArrayList<>();
+		Map<String, Object> employee = new HashMap<>();
+
+		Pageable paging = PageRequest.of(page, size);
+		Page<Employee> pageEmployee = employeeRepository.listeEmployeParNom("%" + employeeLastName + "%", paging);
+
+		employeeList = pageEmployee.getContent();
+		employee.put("employees", employeeList);
+		employee.put("pageCurrent", pageEmployee.getNumber());
+		employee.put("totalItem", pageEmployee.getTotalElements());
+		employee.put("totalPage", pageEmployee.getTotalPages());
+
+		return employee;
 	}
 
 }

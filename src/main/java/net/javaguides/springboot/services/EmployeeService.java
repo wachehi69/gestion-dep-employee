@@ -19,4 +19,8 @@ public interface EmployeeService {
 
 	public Employee updateEmployee(Employee e, Long id);
 
+	public Map<String, Object> findEmployees(String employeeLastName, int page, int size);
+
+	public Map<String, Object> findEmployeesByMotCle(String employeeLastName, int page, int size);
+
 }
